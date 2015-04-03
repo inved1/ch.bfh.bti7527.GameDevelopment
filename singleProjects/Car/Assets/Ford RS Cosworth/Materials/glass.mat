@@ -26,4 +26,4 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: .0901960805, g: .145098045, b: .188235313, a: .329999983}
+        second: {r: 1, g: 1, b: 1, a: .329411775}
