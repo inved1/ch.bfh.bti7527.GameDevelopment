@@ -1,4 +1,4 @@
-﻿using UnityEngine; [ExecuteInEditMode()] 
+﻿using UnityEngine;
 
 public class RotatableGUIItem : MonoBehaviour {
 	

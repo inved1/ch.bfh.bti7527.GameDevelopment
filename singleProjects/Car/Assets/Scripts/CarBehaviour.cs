@@ -14,8 +14,6 @@ public class CarBehaviour : MonoBehaviour {
 	public float 			maxTorque = 3000f;
 	public float			normalBrake = 30000f;
 	public float			fullBrake = 40000f;
-	public GUIText 			guiSpeed;
-	public GUIText			guiRPM;
 	public Texture2D		guiRPMDisplay;
 	public Texture2D		guiRPMPointer;
 	public Texture2D        guiSpeedDisplay;
@@ -31,7 +29,7 @@ public class CarBehaviour : MonoBehaviour {
 
 	public GameObject		centerOfMass;
 	public AudioClip		audioClipBrake;
-	public AudioClip		audioClipStart;
+
 	public AudioClip		audioClipEngineIdle;
 
 
@@ -71,7 +69,6 @@ public class CarBehaviour : MonoBehaviour {
 	private Vector3				myLocalVelocity;
 
 	private AudioSource			myAudioSourceBrake;
-	private AudioSource			myAudioSourceStart;
 	private AudioSource			myAudioSourceIdle;
 	private Material			myBackLightMaterial;
 	private AudioSource			myAudioSource;
@@ -94,11 +91,7 @@ public class CarBehaviour : MonoBehaviour {
 		myAudioSourceBrake.volume = 0.7f;
 		myAudioSourceBrake.playOnAwake = false;
 
-		myAudioSourceStart = (AudioSource)gameObject.AddComponent<AudioSource>();
-		myAudioSourceStart.clip = audioClipStart;
-		myAudioSourceStart.loop = false;
-		myAudioSourceStart.volume = 0.7f;
-		myAudioSourceStart.playOnAwake = false;
+
 		
 		
 		myAudioSourceIdle = (AudioSource)gameObject.AddComponent<AudioSource>();
@@ -107,40 +100,28 @@ public class CarBehaviour : MonoBehaviour {
 		myAudioSourceIdle.volume = 0.7f;
 		myAudioSourceIdle.playOnAwake = false;
 		
-		myAudioSourceStart.Play ();
+		myAudioSource = myAudioSourceIdle;
+		myAudioSourceIdle.Play ();
 
-
-		
 		myBackLightMaterial = backLightL.GetComponent<Renderer>().material;
 	}
 	
 	// Update is called once per frame constanc time per frame
 	void FixedUpdate ()
 	{
-		if (myAudioSourceStart.isPlaying) {
-			return;
-		} else {
-			myAudioSource = myAudioSourceIdle;
-			myAudioSourceIdle.Play ();
-		}
-
 
 
 		myCurrentSpeedKMH = myRigidBody.velocity.magnitude * 3.6f;
 
 		myLocalVelocity = transform.InverseTransformDirection (myRigidBody.velocity);
 
-		if ((myLocalVelocity.z > 0.2) && (myAudioSourceStart.isPlaying)) {
-			myAudioSourceStart.Stop();
-			myAudioSource = myAudioSourceIdle;
-			myAudioSource.Play();
 
-		}
 
 		bool velocityIsForeward = Vector3.Angle(transform.forward, myRigidBody.velocity) < 50f;
 
 		myMotorTorque = maxTorque * Input.GetAxis("Vertical");
-		guiSpeed.text = myCurrentSpeedKMH.ToString("0") + " KMH";
+
+		//guiSpeed.text = myCurrentSpeedKMH.ToString("0") + " KMH";
 
 
 		// MAX SPEED
@@ -160,7 +141,7 @@ public class CarBehaviour : MonoBehaviour {
 		
 		//rpm			umfang 2*pi*radius  *60 in der stunde (meter) /1000 = km	
 		myRPM = ((wheelFL.rpm + wheelFR.rpm) / 2 )  * 60 / 1000f; 
-		myRPM = myRPM *gears[currentGear] / 9000 * 360;
+		myRPM = myRPM /gears[currentGear] ;
 
 		if (doBraking || FullBrake()) {
 			
@@ -245,8 +226,8 @@ public class CarBehaviour : MonoBehaviour {
 	
 		needleKMH.angle = myCurrentSpeedKMH + 40f;
 		needleRPM.angle = myRPM + 80f; 
-		Debug.Log (myRPM);
-		Debug.Log (gears [currentGear]);
+		//Debug.Log (myRPM);
+		//Debug.Log (gears [currentGear]);
 
 		//shifting
 		if (automaticTransmission && (currentGear == 1) && !velocityIsForeward) {
@@ -269,7 +250,6 @@ public class CarBehaviour : MonoBehaviour {
 	{   
 
 		GUI.Box(new Rect(0, 0, 140, 140), guiSpeedDisplay);
-
 
 		GUI.Box(new Rect(150, 0, 140, 140), guiRPMDisplay);
 
