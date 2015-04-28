@@ -40,8 +40,9 @@ public class WheelBehaviour : MonoBehaviour {
 		// absolute velocity at wheel in world space
 		Vector3 wheelVelo = wheelCol.attachedRigidbody.GetPointVelocity(hit.point);
 		if(Input.GetKey("space"))
-		{ if (Vector3.Distance(_skidmarkLastPos, hit.point) > 0.1f)
-			{ _skidmarkLast = _skidmarks.Add(hit.point + wheelVelo*Time.deltaTime,
+		{ if (Vector3.Distance(_skidmarkLastPos, hit.point) > 0.1f)			{ 
+
+				_skidmarkLast = _skidmarks.Add(hit.point + wheelVelo*Time.deltaTime,
 				                                 hit.normal,
 				                                 0.5f,
 				                                 _skidmarkLast);

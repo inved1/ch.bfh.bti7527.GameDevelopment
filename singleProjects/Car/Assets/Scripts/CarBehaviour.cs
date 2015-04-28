@@ -39,6 +39,10 @@ public class CarBehaviour : MonoBehaviour {
 	public GameObject		backLightL;
 	public GameObject		backLightR;
 
+	private Quaternion 		myStartRot;
+	private Vector3 		myStartPos;
+
+
 
 
 	private float myMaxSpeedKMH = 150f;
@@ -106,6 +110,9 @@ public class CarBehaviour : MonoBehaviour {
 		myAudioSourceIdle.Play ();
 
 		myBackLightMaterial = backLightL.GetComponent<Renderer>().material;
+
+		myStartRot = myRigidBody.rotation;
+		myStartPos = myRigidBody.position;
 	}
 	
 	// Update is called once per frame constanc time per frame
@@ -242,7 +249,8 @@ public class CarBehaviour : MonoBehaviour {
 			ShiftDown();
 		}
 
-
+		Restart ();
+		Hoover ();
 
 	}
 	
@@ -270,12 +278,34 @@ public class CarBehaviour : MonoBehaviour {
 
 	
 	}
-	
-	
+
+	void Restart(){
+		if (Input.GetKeyDown (KeyCode.R)) {
+
+			myRigidBody.transform.rotation = myStartRot;
+			myRigidBody.velocity = Vector3.zero;
+			myRigidBody.transform.position = myStartPos;
+		}
+	}
+
+	void Hoover(){
+		if (Input.GetKeyDown (KeyCode.H)) {
+			myRigidBody.AddForce (Vector3.up * 10000f, ForceMode.Impulse);
+			myRigidBody.useGravity = false;
+
+		} else {
+			myRigidBody.useGravity = true;
+		}
+
+
+	}
+
 	bool FullBrake()
 	{
 		return Input.GetKey ("space");
 	}
+
+
 
 	void ShiftUp(){
 		if (currentGear < gears.Length - 1) {
