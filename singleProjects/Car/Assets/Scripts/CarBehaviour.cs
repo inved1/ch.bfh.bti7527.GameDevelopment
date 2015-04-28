@@ -13,7 +13,7 @@ public class CarBehaviour : MonoBehaviour {
 	public float			minTorque = 500f;
 	public float 			maxTorque = 3000f;
 	public float			normalBrake = 30000f;
-	public float			fullBrake = 40000f;
+	public float			fullBrake = 400000f;
 	public Texture2D		guiRPMDisplay;
 	public Texture2D		guiRPMPointer;
 	public Texture2D        guiSpeedDisplay;
@@ -78,6 +78,8 @@ public class CarBehaviour : MonoBehaviour {
 	void Start ()
 	{
 		myRigidBody = GetComponent<Rigidbody> ();
+
+		myRigidBody.centerOfMass = centerOfMass.transform.localPosition;
 		myParticleSystemDustFR = GameObject.Find ("DustFR").GetComponent<ParticleSystem> ();
 		myParticleSystemDustFL = GameObject.Find ("DustFL").GetComponent<ParticleSystem> ();
 		myParticleSystemDustRR = GameObject.Find ("DustRR").GetComponent<ParticleSystem> ();
