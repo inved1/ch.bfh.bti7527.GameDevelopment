@@ -4,6 +4,10 @@ using System.Collections;
 public class MenuBehavior : MonoBehaviour {
 
 	public Material carBodyMaterial;
+	public WheelCollider FL;
+	public WheelCollider FR;
+	public WheelCollider RR;
+	public WheelCollider RL;
 
 	// Use this for initialization
 	void Start () {
@@ -67,14 +71,21 @@ public class MenuBehavior : MonoBehaviour {
 	}
 
 	public void OnSliderDistanceChanged(float distance){
-
+		Prefs.suspensionDistance = distance;
+		Debug.Log (distance);
+		Prefs.setSuspension (ref FL, ref FR, ref RR, ref RL);
+		Prefs.Save ();
 	}
 
 	public void OnSliderForceChanged(float force){
-
+		Prefs.suspensionSpring = force;
+		Prefs.setSuspension (ref FL, ref FR, ref RR, ref RL);
+		Prefs.Save ();
 	}
 
 	public void OnSliderSuspensionChanged(float suspension){
-
+		Prefs.suspensionDamper = suspension;
+		Prefs.setSuspension (ref FL, ref FR, ref RR, ref RL);
+		Prefs.Save ();
 	}
 }

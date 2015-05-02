@@ -27,7 +27,9 @@ public class WheelBehaviour : MonoBehaviour {
 		wheelCol.GetWorldPose(out position, out quat);
 		transform.position = position;
 
-		transform.rotation = quat;
+		if (Application.loadedLevel != 0) {
+			transform.rotation = quat;
+		}
 
 		WheelHit hit;
 		if (wheelCol.GetGroundHit(out hit))
@@ -40,9 +42,17 @@ public class WheelBehaviour : MonoBehaviour {
 		// absolute velocity at wheel in world space
 		Vector3 wheelVelo = wheelCol.attachedRigidbody.GetPointVelocity(hit.point);
 		if(Input.GetKey("space"))
-		{ if (Vector3.Distance(_skidmarkLastPos, hit.point) > 0.1f)			{ 
+		{ if (Vector3.Distance(_skidmarkLastPos, hit.point) > 0.1f)			
+			{ 
+				Vector3 tmpPosNew = hit.point;
+				if (wheelCol.name.Substring(1,1) == "R") {
+					tmpPosNew.x = tmpPosNew.x +- 0.15f;
+				}
+				else {
+					tmpPosNew.x = tmpPosNew.x + 0.15f;
+				}
 
-				_skidmarkLast = _skidmarks.Add(hit.point + wheelVelo*Time.deltaTime,
+				_skidmarkLast = _skidmarks.Add(tmpPosNew + wheelVelo*Time.deltaTime,
 				                                 hit.normal,
 				                                 0.5f,
 				                                 _skidmarkLast);

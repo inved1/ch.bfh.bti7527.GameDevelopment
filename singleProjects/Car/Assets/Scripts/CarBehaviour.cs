@@ -113,6 +113,8 @@ public class CarBehaviour : MonoBehaviour {
 
 		myStartRot = myRigidBody.rotation;
 		myStartPos = myRigidBody.position;
+
+		SetSuspension();
 	}
 	
 	// Update is called once per frame constanc time per frame
@@ -144,9 +146,33 @@ public class CarBehaviour : MonoBehaviour {
 		                  Input.GetAxis("Vertical") > 0 && !velocityIsForeward);
 
 		myWheelTorque = 0f;
-		
 		myRPM = 0f;
 	
+		//drifting
+		bool isDrifting = false;
+		WheelHit tmpGroundHit;
+		if (wheelFL.GetGroundHit (out tmpGroundHit)) {
+			isDrifting = (Mathf.Abs (tmpGroundHit.sidewaysSlip) >= 0.2f);
+		}
+		if (!isDrifting) {
+			if(wheelFR.GetGroundHit(out tmpGroundHit)) {
+				isDrifting = (Mathf.Abs(tmpGroundHit.sidewaysSlip) >= 0.2f);
+				
+			}
+			if (!isDrifting) {
+				if(wheelRR.GetGroundHit(out tmpGroundHit)) {
+					isDrifting = (Mathf.Abs(tmpGroundHit.sidewaysSlip) >= 0.2f);
+					
+				}
+				if (!isDrifting) {
+					if(wheelRL.GetGroundHit(out tmpGroundHit)) {
+						isDrifting = (Mathf.Abs(tmpGroundHit.sidewaysSlip) >= 0.2f);
+						
+					}
+				}
+			}
+		}
+
 		
 		//rpm			umfang 2*pi*radius  *60 in der stunde (meter) /1000 = km	
 		myRPM = ((wheelFL.rpm + wheelFR.rpm) / 2 )  * 60 / 1000f; 
@@ -225,6 +251,21 @@ public class CarBehaviour : MonoBehaviour {
 				backLightL.GetComponent<Renderer>().material = myBackLightMaterial;
 				backLightR.GetComponent<Renderer>().material = myBackLightMaterial;
 			}
+
+			if(isDrifting){
+				if(!myAudioSourceBrake.isPlaying){
+					myAudioSourceBrake.Play();
+				}
+				myParticleSystemDustFR.emissionRate = myParticleSystemDustFL.emissionRate = 
+					myParticleSystemDustRR.emissionRate = myParticleSystemDustRL.emissionRate = Mathf.Max(myCurrentSpeedKMH * 1.3f, 2);
+				
+				if(wheelRL.isGrounded) myParticleSystemDustRL.enableEmission = true;
+				if(wheelRR.isGrounded) myParticleSystemDustRR.enableEmission = true;
+				if(wheelFL.isGrounded) myParticleSystemDustFL.enableEmission = true;
+				if(wheelFR.isGrounded) myParticleSystemDustFR.enableEmission = true;
+				
+			}
+
 		}
 		
 		// STEERING
@@ -251,6 +292,8 @@ public class CarBehaviour : MonoBehaviour {
 
 		Restart ();
 		Hoover ();
+
+
 
 	}
 	
@@ -317,6 +360,14 @@ public class CarBehaviour : MonoBehaviour {
 		if (currentGear > 0) {
 			currentGear--;
 		}
+	}
+
+	void SetSuspension(){
+		Prefs.suspensionDistance = PlayerPrefs.GetFloat ("suspensionDistance", 0.2f);
+		Prefs.suspensionDamper = PlayerPrefs.GetFloat ("suspensionDamper", 4500f);
+		Prefs.suspensionSpring = PlayerPrefs.GetFloat ("suspensionSpring", 35000f);
+
+		Prefs.setSuspension(ref wheelFL, ref wheelFR, ref wheelRR, ref wheelRL);
 	}
 
 }
