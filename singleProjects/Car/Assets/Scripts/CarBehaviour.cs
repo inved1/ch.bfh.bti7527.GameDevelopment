@@ -115,6 +115,9 @@ public class CarBehaviour : MonoBehaviour {
 		myStartPos = myRigidBody.position;
 
 		SetSuspension();
+
+		myParticleSystemDustFR.enableEmission = myParticleSystemDustFL.enableEmission = 
+			myParticleSystemDustRR.enableEmission = myParticleSystemDustRL.enableEmission = false;
 	}
 	
 	// Update is called once per frame constanc time per frame
@@ -152,21 +155,21 @@ public class CarBehaviour : MonoBehaviour {
 		bool isDrifting = false;
 		WheelHit tmpGroundHit;
 		if (wheelFL.GetGroundHit (out tmpGroundHit)) {
-			isDrifting = (Mathf.Abs (tmpGroundHit.sidewaysSlip) >= 0.2f);
+			isDrifting = (Mathf.Abs (tmpGroundHit.sidewaysSlip) > 0.2f);
 		}
 		if (!isDrifting) {
 			if(wheelFR.GetGroundHit(out tmpGroundHit)) {
-				isDrifting = (Mathf.Abs(tmpGroundHit.sidewaysSlip) >= 0.2f);
+				isDrifting = (Mathf.Abs(tmpGroundHit.sidewaysSlip) > 0.2f);
 				
 			}
 			if (!isDrifting) {
 				if(wheelRR.GetGroundHit(out tmpGroundHit)) {
-					isDrifting = (Mathf.Abs(tmpGroundHit.sidewaysSlip) >= 0.2f);
+					isDrifting = (Mathf.Abs(tmpGroundHit.sidewaysSlip) > 0.2f);
 					
 				}
 				if (!isDrifting) {
 					if(wheelRL.GetGroundHit(out tmpGroundHit)) {
-						isDrifting = (Mathf.Abs(tmpGroundHit.sidewaysSlip) >= 0.2f);
+						isDrifting = (Mathf.Abs(tmpGroundHit.sidewaysSlip) > 0.2f);
 						
 					}
 				}
@@ -263,7 +266,15 @@ public class CarBehaviour : MonoBehaviour {
 				if(wheelRR.isGrounded) myParticleSystemDustRR.enableEmission = true;
 				if(wheelFL.isGrounded) myParticleSystemDustFL.enableEmission = true;
 				if(wheelFR.isGrounded) myParticleSystemDustFR.enableEmission = true;
+
+				// todo, get script wheelcollider script and do drifting
+
 				
+			}
+			else{
+			if(myAudioSourceBrake.isPlaying){
+					myAudioSourceBrake.Stop();
+				}
 			}
 
 		}

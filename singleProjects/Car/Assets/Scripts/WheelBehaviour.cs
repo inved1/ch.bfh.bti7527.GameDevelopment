@@ -27,7 +27,7 @@ public class WheelBehaviour : MonoBehaviour {
 		wheelCol.GetWorldPose(out position, out quat);
 		transform.position = position;
 
-		if (Application.loadedLevel != 0) {
+		if (Application.loadedLevel != 1) {
 			transform.rotation = quat;
 		}
 
